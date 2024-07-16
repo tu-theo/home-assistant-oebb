@@ -3,11 +3,11 @@
   "integration_type": "hub",
   "name": "OEBB",
   "version": "1.2.0",
-  "documentation": "https://github.com/lollopod/home-assistant-oebb",
-  "issue_tracker": "https://github.com/lollopod/home-assistant-oebb/issues",
+  "documentation": "https://gitlab.moonflare.at/homeassistant/oebb_00",
+  "issue_tracker": "https://gitlab.moonflare.at/homeassistant/oebb_00/issues",
   "dependencies": [ ],
   "codeowners": [
-    "@lollopod"
+    "@tu-theo"
   ],
   "requirements": [ "pyowm" ],
   "iot_class": "cloud_polling"

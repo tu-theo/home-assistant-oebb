@@ -1,7 +1,7 @@
 """
 A integration that allows you to get information about next departure from specified stop.
 For more details about this component, please refer to the documentation at
-https://github.com/lollopod/home-assistant-oebb
+
 """
 from datetime import datetime, timedelta
 import json
@@ -36,7 +36,7 @@ CONF_TICKERID = "tickerID"
 CONF_START = "start"
 CONF_EQSTOPS = "eqstops"
 CONF_SHOWJOURNEYS = "showJourneys"
-CONF_ADDITIONALTIME = "additionalTime"
+CONF_ADDITIONALTIME = "additionaTime"
 CONF_ICON = "icon"
 
 
@@ -82,9 +82,7 @@ async def async_setup_platform(hass, config, add_devices_callback, discovery_inf
     # icon = config.get(CONF_ICON)
     # devices = []
     # api is my coordinator
-
     api = OebbAPI(async_create_clientsession(hass), hass.loop, params)
-    # api = OebbAPI(async_create_clientsession(hass, params), hass.loop, params)
     coordinator = OebbCoordinator(hass, api)
     # data = await api.get_json()
     # _LOGGER.debug(len(data["journey"]))
@@ -122,11 +120,14 @@ class OebbAPI:
 
         _LOGGER.debug("Inside Fetch_data")
 
-        try:
+        response = None
 
-            async with self.session.get(BASE_URL, params=self.params) as resp:
-                text = await resp.text()
-                value = json.loads(text.replace("\n", "")[13:])
+        try:
+            async with async_timeout.timeout(10):
+
+                response = await self.session.get(self.url)
+                string = str(response.content._buffer[0]).replace("\\n", "")[16:-1]
+                value = json.loads(string)
 
         except Exception:
             pass
@@ -143,7 +144,7 @@ class OebbCoordinator(DataUpdateCoordinator):
             hass,
             _LOGGER,
             # Name of the data. For logging purposes.
-            name="OEBB Coordinator",
+            name="My sensor",
             # Polling interval. Will only be polled if there are subscribers.
             update_interval=timedelta(seconds=30),
         )
@@ -158,7 +159,7 @@ class OebbCoordinator(DataUpdateCoordinator):
         try:
             # Note: asyncio.TimeoutError and aiohttp.ClientError are already
             # handled by the data update coordinator.
-            async with async_timeout.timeout(20):
+            async with async_timeout.timeout(10):
                 return await self.oebb_api.fetch_data()
 
         except Exception as err:
@@ -191,14 +192,18 @@ class OebbSensor(CoordinatorEntity, SensorEntity):
             _LOGGER.warning("Sensor %d out of coordinator data range", self.idx)
             return
         else:
+            now = datetime.now()
+            date_string = now.strftime("%d/%m/%Y")
+            
             self.attributes = {
+                "startDate": date_string,
                 "startTime": data["journey"][self.idx]["ti"],
                 "lastStop": data["journey"][self.idx]["lastStop"],
                 "line": data["journey"][self.idx]["pr"],
+                "rt": data["journey"][self.idx]["rt"],
+                "platform": data["journey"][self.idx]["tr"],
             }
-            now = datetime.now()
-
-            date_string = now.strftime("%d/%m/%Y")
+            
             # _LOGGER.debug("Date_string : %s", date_string)
             timestamp_string = date_string + " " + self.attributes["startTime"]
             # _LOGGER.debug("Timestamp_string %s:", timestamp_string)
