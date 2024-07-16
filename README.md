@@ -16,6 +16,79 @@ sensor:
   platform: oebb
   evaId: 491116
   dirInput: 491123
+
+template:
+  - sensor:
+      - name: "oebb0"
+        state: >
+          {{ strptime(state_attr('sensor.oebb_journey_0', 'startDate') + " " + state_attr('sensor.oebb_journey_0', 'startTime'), '%d/%m/%Y %H:%M') }}
+        attributes:
+          actualDeparture: > 
+            {% if state_attr('sensor.oebb_journey_0', 'rt') == false %}
+            {{ strptime(state_attr('sensor.oebb_journey_0', 'startDate') + " " + state_attr('sensor.oebb_journey_0', 'startTime'), '%d/%m/%Y %H:%M') }}
+            {% elif state_attr('sensor.oebb_journey_0', 'rt')['status'] == 'Ausfall' %}
+            {{ strptime(state_attr('sensor.oebb_journey_0', 'startDate') + " " + state_attr('sensor.oebb_journey_0', 'startTime'), '%d/%m/%Y %H:%M') }}
+            {% elif state_attr('sensor.oebb_journey_0', 'rt')['status'] is none %}
+            {{ strptime(state_attr('sensor.oebb_journey_0', 'startDate') + " " + state_attr('sensor.oebb_journey_0', 'rt')['dlt'], '%d/%m/%Y %H:%M') }}
+            {% endif %}
+          scheduledTime: >
+            {{ state_attr('sensor.oebb_journey_0', 'startTime') }}
+          actualTime: >
+            {% if state_attr('sensor.oebb_journey_0', 'rt') == false %}
+            {{ state_attr('sensor.oebb_journey_0', 'startTime') }}
+            {% elif state_attr('sensor.oebb_journey_0', 'rt')['status'] is none %}
+            {{ state_attr('sensor.oebb_journey_0', 'rt')['dlt'] }}
+            {% elif state_attr('sensor.oebb_journey_0', 'rt')['status'] == 'Ausfall' %}
+            {{ state_attr('sensor.oebb_journey_0', 'startTime') }}
+            {% endif %}
+          lastStop: >
+            {{ ((state_attr('sensor.oebb_journey_0', 'lastStop'))) | replace('Bahnhof', '') | replace('Hbf', '') | replace('.', '. ') | replace('&#246;', 'ö') }}
+          line: >
+            {{ ((state_attr('sensor.oebb_journey_0', 'line'))) | replace(' ', '') }}
+          status: >
+            {% if state_attr('sensor.oebb_journey_0', 'rt') == false %}
+            Pünktlich
+            {% elif state_attr('sensor.oebb_journey_0', 'rt')['status'] is none %}
+            Verspätet
+            {% elif state_attr('sensor.oebb_journey_0', 'rt')['status'] == 'Ausfall' %}
+            Ausfall
+            {% endif %}
+            
+      - name: "oebb1"
+        state: >
+          {{ strptime(state_attr('sensor.oebb_journey_1', 'startDate') + " " + state_attr('sensor.oebb_journey_1', 'startTime'), '%d/%m/%Y %H:%M') }}
+        attributes:
+          actualDeparture: > 
+            {% if state_attr('sensor.oebb_journey_1', 'rt') == false %}
+            {{ strptime(state_attr('sensor.oebb_journey_1', 'startDate') + " " + state_attr('sensor.oebb_journey_1', 'startTime'), '%d/%m/%Y %H:%M') }}
+            {% elif state_attr('sensor.oebb_journey_1', 'rt')['status'] == 'Ausfall' %}
+            {{ strptime(state_attr('sensor.oebb_journey_1', 'startDate') + " " + state_attr('sensor.oebb_journey_1', 'startTime'), '%d/%m/%Y %H:%M') }}
+            {% elif state_attr('sensor.oebb_journey_1', 'rt')['status'] is none %}
+            {{ strptime(state_attr('sensor.oebb_journey_1', 'startDate') + " " + state_attr('sensor.oebb_journey_1', 'rt')['dlt'], '%d/%m/%Y %H:%M') }}
+            {% endif %}
+          scheduledTime: >
+            {{ state_attr('sensor.oebb_journey_1', 'startTime') }}
+          actualTime: >
+            {% if state_attr('sensor.oebb_journey_1', 'rt') == false %}
+            {{ state_attr('sensor.oebb_journey_1', 'startTime') }}
+            {% elif state_attr('sensor.oebb_journey_1', 'rt')['status'] is none %}
+            {{ state_attr('sensor.oebb_journey_1', 'rt')['dlt'] }}
+            {% elif state_attr('sensor.oebb_journey_1', 'rt')['status'] == 'Ausfall' %}
+            {{ state_attr('sensor.oebb_journey_1', 'startTime') }}
+            {% endif %}
+          lastStop: >
+            {{ ((state_attr('sensor.oebb_journey_1', 'lastStop'))) | replace('Bahnhof', '') | replace('Hbf', '') | replace('.', '. ') | replace('&#246;', 'ö') }}
+          line: >
+            {{ ((state_attr('sensor.oebb_journey_1', 'line'))) | replace(' ', '') }}
+          status: >
+            {% if state_attr('sensor.oebb_journey_1', 'rt') == false %}
+            Pünktlich
+            {% elif state_attr('sensor.oebb_journey_1', 'rt')['status'] is none %}
+            Verspätet
+            {% elif state_attr('sensor.oebb_journey_1', 'rt')['status'] == 'Ausfall' %}
+            Ausfall
+            {% endif %}
+
 ```
 
 ## Configuration variables

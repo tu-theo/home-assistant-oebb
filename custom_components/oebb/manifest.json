@@ -1,7 +1,7 @@
 {
   "domain": "oebb",
   "integration_type": "hub",
-  "name": "OEBB",
+  "name": "OEBB_00",
   "version": "1.2.0",
   "documentation": "https://gitlab.moonflare.at/homeassistant/oebb_00",
   "issue_tracker": "https://gitlab.moonflare.at/homeassistant/oebb_00/issues",
